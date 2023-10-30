@@ -50,15 +50,17 @@ with torch.no_grad():
     logits_per_image, logits_per_text = decoder(image_features, text_features)
 
     torch.onnx.export(decoder, (image_features, text_features),
-                      "feature_matmul.onnx",
+                      "feature_matmul_dynamic.onnx",
                       input_names=("image_features", "text_features"),
                       output_names=("logits_per_image", "logits_per_text"),
                       dynamic_axes={
                           "image_features": {
-                              0: "num_image"
+                              0: "num_image",
+                              1: "len_image_feature"
                           },
                           "text_features": {
-                              0: "num_text"
+                              0: "num_text",
+                              1: "len_text_feature"
                           }
                       })
 
